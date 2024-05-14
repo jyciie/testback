@@ -1,6 +1,7 @@
 const express = require('express');
 const sequelize = require('./config/connection');
 const cors = require('cors');
+const multer = require('multer');
 const {
   createUser,
   updateUser,
@@ -21,30 +22,17 @@ const PORT = 3001;
 app.use(express.json());
 app.use(cors());
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 app.get('/', (req, res) => {
   res.status(200);
   res.send('Welcome');
 });
 
-app.post(
-  '/createUser',
-  createUser
-  //(req, res) => {
-  //   //const { name, num } = req.body;
-  //   const { key } = req.body;
-  //   res.send(`Welcome ${key[0].name}`);
-  // }
-);
+app.post('/createUser', upload.single('file'), createUser);
 
-app.put(
-  '/updateUser/:userID',
-  // (req, res) => {
-  //   //const { name, num } = req.body;
-  //   const { key } = req.body;
-  //   res.send(`Welcome ${key[0].name}`);
-  // }
-  updateUser
-);
+app.put('/updateUser/:userID', upload.single('file'), updateUser);
 
 app.delete('/deleteUser/:userID', deleteUser);
 

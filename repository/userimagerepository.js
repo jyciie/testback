@@ -34,10 +34,15 @@ const GetUserImages = async () => {
   return await db.UserImage.findAll();
 };
 
+const UpsertUserImage = async (userImage) => {
+  return await db.UserImage.upsert(userImage);
+};
+
 module.exports = {
   CreateUserImage,
   UpdateUserImage,
   DeleteUserImage,
   GetUserImageByID,
   GetUserImages,
+  UpsertUserImage,
 };

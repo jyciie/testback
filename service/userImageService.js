@@ -4,6 +4,7 @@ const {
   DeleteUserImage,
   GetUserImageByID,
   GetUserImages,
+  UpsertUserImage,
 } = require('../repository/userimagerepository');
 
 const createUserImageService = async (userImage) => {
@@ -25,10 +26,15 @@ const getUserImageByIDService = async (userID) => {
 const getUserImagesService = async () => {
   return await GetUserImages();
 };
+
+const upsertUserImageService = async (userImage) => {
+  return await UpsertUserImage(userImage);
+};
 module.exports = {
   createUserImageService,
   updateUserImageService,
   deleteUserImageService,
   getUserImageByIDService,
   getUserImagesService,
+  upsertUserImageService,
 };

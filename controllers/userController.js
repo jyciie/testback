@@ -7,13 +7,13 @@ const {
 } = require('../service/userService');
 const {
   createUserImageService,
-  updateUserImageService,
   deleteUserImageService,
+  upsertUserImageService,
 } = require('../service/userImageService');
 
 const createUser = async (req, res) => {
-  const { FName, MName, LName, BDate, ContactNumber, Address, ImageBlob } =
-    req.body;
+  const { FName, MName, LName, BDate, ContactNumber, Address } = req.body;
+  const file = req.file;
 
   const user = await createUserService({
     FName,
@@ -23,14 +23,18 @@ const createUser = async (req, res) => {
     ContactNumber,
     Address,
   });
+
   if (user) {
-    const userimage = await createUserImageService({
-      ImageBlob,
-      userID: user.userID,
-    });
-    if (userimage) {
-      return res.send('Added');
-    } else return res.send('Error UserImage');
+    if (file) {
+      const userimage = await createUserImageService({
+        ImageBlob: file.buffer,
+        userID: user.userID,
+      });
+      if (userimage) {
+        return res.send('Added');
+      } else return res.send('Error UserImage');
+    }
+    return res.send('User added');
   } else return res.send('Error User');
 };
 
@@ -38,6 +42,8 @@ const updateUser = async (req, res) => {
   const { FName, MName, LName, BDate, ContactNumber, Address, ImageBlob } =
     req.body;
   const { userID } = req.params;
+  const file = req.file;
+
   const user = await updateUserService(
     {
       FName,
@@ -50,16 +56,16 @@ const updateUser = async (req, res) => {
     userID
   );
   if (user) {
-    const userimage = await updateUserImageService(
-      {
-        ImageBlob,
-        userID: userID,
-      },
-      userID
-    );
-    if (userimage) {
-      return res.send('Updated');
-    } else return res.send('Error UserImage');
+    if (file) {
+      const userimage = await upsertUserImageService(
+        { ImageBlob: file.buffer, userID: userID },
+        userID
+      );
+      if (userimage) {
+        return res.send('Updated');
+      } else return res.send('Error UserImage');
+    }
+    return res.send('Updated');
   } else return res.send('Error User');
 };
 
